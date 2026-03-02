@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin</title>
+<style>
+body{font-family:Arial;max-width:800px;margin:auto;padding:20px;}
+.card{background:#f4f4f4;padding:15px;margin:10px 0;border-radius:8px;}
+button{margin:3px;padding:5px 8px;}
+</style>
+</head>
+<body>
+
+<h2>Panel Admin</h2>
+
+<input type="password" id="pin" placeholder="PIN">
+<button onclick="login()">Entrar</button>
+
+<div id="panel" style="display:none;">
+
+<input type="date" id="fecha" onchange="cargar()">
+
+<div id="citas"></div>
+
+</div>
+
+<script>
+
+const API="PEGA_AQUI_TU_URL_EXEC";
+
+async function login(){
+  const r=await fetch(API+"?action=checkPin&pin="+pin.value).then(r=>r.json());
+  if(r.ok){
+    panel.style.display="block";
+  }else{
+    alert("PIN incorrecto");
+  }
+}
+
+async function cargar(){
+  const f=fecha.value;
+  const r=await fetch(API+"?action=citasDia&fecha="+f).then(r=>r.json());
+
+  citas.innerHTML="";
+  r.forEach(c=>{
+    const d=document.createElement("div");
+    d.className="card";
+    d.innerHTML=
+      c[2]+" - "+c[5]+"<br>"+
+      c[3]+"<br>"+
+      "Estado: "+c[8]+"<br>"+
+      "<button onclick='estado(\""+c[0]+"\",\"confirmada\")'>Confirmar</button>"+
+      "<button onclick='estado(\""+c[0]+"\",\"cancelada\")'>Cancelar</button>"+
+      "<button onclick='borrar(\""+c[0]+"\")'>Eliminar</button>";
+    citas.appendChild(d);
+  });
+}
+
+async function estado(id,e){
+  await fetch(API+"?action=updateEstado&id="+id+"&estado="+e);
+  cargar();
+}
+
+async function borrar(id){
+  await fetch(API+"?action=deleteCita&id="+id);
+  cargar();
+}
+
+</script>
+</body>
+</html>
