@@ -8,97 +8,181 @@
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
 
 <style>
+:root{
+  --bg:#f5f5f7;
+  --card:#ffffff;
+  --primary:#111;
+  --accent:#000;
+}
+
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-  background:#f2f2f7;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+  background:var(--bg);
 }
+
 header{
   background:#000;
   color:#fff;
-  padding:15px;
-  text-align:center;
+  padding:18px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+header h1{
+  margin:0;
   font-size:18px;
 }
-#calendar{
-  max-width:900px;
-  margin:30px auto;
+
+.admin-btn{
   background:#fff;
-  padding:15px;
-  border-radius:12px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  color:#000;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:12px;
+  cursor:pointer;
+  text-decoration:none;
 }
-button{
+
+.container{
+  max-width:1000px;
+  margin:30px auto;
+  padding:0 20px;
+}
+
+#calendar{
+  background:var(--card);
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.08);
+}
+
+/* Mejoramos FullCalendar */
+.fc-toolbar-title{
+  font-size:18px !important;
+  font-weight:600;
+}
+
+.fc-button{
+  background:#000 !important;
+  border:none !important;
+  border-radius:6px !important;
+}
+
+.fc-daygrid-day{
+  cursor:pointer;
+}
+
+.fc-daygrid-day:hover{
+  background:#f0f0f0;
+}
+
+.fc-event{
+  background:#000 !important;
+  border:none !important;
+  border-radius:6px !important;
+  padding:3px !important;
+}
+
+.modal{
+  position:fixed;
+  top:0;left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+.modal-content{
+  background:#fff;
+  padding:25px;
+  border-radius:12px;
+  width:300px;
+}
+
+.modal input, .modal select{
+  width:100%;
+  padding:8px;
+  margin:6px 0;
+}
+
+.modal button{
+  width:100%;
+  padding:10px;
   background:#000;
   color:#fff;
   border:none;
-  padding:8px 12px;
   border-radius:6px;
+  margin-top:10px;
 }
 </style>
 </head>
 <body>
 
-<header id="negocio">Barbería</header>
+<header>
+  <h1 id="negocio">Barbería</h1>
+  <a href="admin.html" class="admin-btn">Admin</a>
+</header>
 
-<div id="calendar"></div>
+<div class="container">
+  <div id="calendar"></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h3>Nueva cita</h3>
+    <select id="servicio"></select>
+    <input type="time" id="hora">
+    <input type="text" id="nombre" placeholder="Nombre">
+    <input type="text" id="telefono" placeholder="Teléfono">
+    <input type="email" id="email" placeholder="Email">
+    <button onclick="guardar()">Confirmar cita</button>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <script>
 
 const API="https://script.google.com/macros/s/AKfycbw6MIsDhxzQJx9Ti4POvhHnwLCfZt-KN99OU9z7IpyAjPrPLuwMOPQ17jnHcF9GWdFebA/exec";
+let fechaSeleccionada=null;
+let servicios=[];
 
 document.addEventListener('DOMContentLoaded', async function() {
 
   const conf=await fetch(API+"?action=config").then(r=>r.json());
   document.getElementById("negocio").innerText=conf.negocio;
 
-  const calendarEl = document.getElementById('calendar');
+  servicios=await fetch(API+"?action=servicios").then(r=>r.json());
 
-  const calendar = new FullCalendar.Calendar(calendarEl, {
+  const sel=document.getElementById("servicio");
+  servicios.forEach(s=>{
+    const o=document.createElement("option");
+    o.value=s.id;
+    o.textContent=s.nombre+" - "+s.precio+"€";
+    sel.appendChild(o);
+  });
+
+  const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
     initialView: 'dayGridMonth',
+    height:"auto",
     selectable:true,
 
     dateClick: function(info) {
-      const fecha=info.dateStr;
-      const hora=prompt("Hora (ej: 14:00)");
-      const nombre=prompt("Nombre");
-
-      if(!hora||!nombre) return;
-
-      fetch(API,{
-        method:"POST",
-        body:JSON.stringify({
-          action:"addCita",
-          fecha:fecha,
-          hora:hora,
-          servicio:1,
-          nombre:nombre,
-          telefono:"",
-          email:""
-        })
-      })
-      .then(r=>r.json())
-      .then(res=>{
-        if(res.ok){
-          alert("Reserva confirmada");
-          calendar.refetchEvents();
-        }else{
-          alert(res.error);
-        }
-      });
+      fechaSeleccionada=info.dateStr;
+      document.getElementById("modal").style.display="flex";
     },
 
     events: async function(fetchInfo, successCallback) {
-      const fecha=fetchInfo.startStr.slice(0,7);
-      const res=await fetch(API+"?action=citasDia&fecha="+fetchInfo.startStr.slice(0,10)).then(r=>r.json());
-
+      const start=fetchInfo.startStr.slice(0,10);
+      const res=await fetch(API+"?action=citasDia&fecha="+start).then(r=>r.json());
       const eventos=res.map(c=>({
         title:c[5],
         start:c[1]+"T"+c[2]
       }));
-
       successCallback(eventos);
     }
 
@@ -106,6 +190,37 @@ document.addEventListener('DOMContentLoaded', async function() {
 
   calendar.render();
 });
+
+async function guardar(){
+
+  const payload={
+    action:"addCita",
+    fecha:fechaSeleccionada,
+    hora:hora.value,
+    servicio:servicio.value,
+    nombre:nombre.value,
+    telefono:telefono.value,
+    email:email.value
+  };
+
+  const res=await fetch(API,{
+    method:"POST",
+    body:JSON.stringify(payload)
+  }).then(r=>r.json());
+
+  if(res.ok){
+    alert("Cita confirmada");
+    location.reload();
+  }else{
+    alert(res.error);
+  }
+}
+
+window.onclick=function(e){
+  if(e.target.id==="modal"){
+    modal.style.display="none";
+  }
+}
 </script>
 
 </body>
