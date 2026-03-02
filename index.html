@@ -3,216 +3,160 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reservar Cita - Barbería Maweka</title>
+<title>Reservar Cita</title>
 
 <style>
-body { font-family: Arial; max-width: 500px; margin: auto; padding: 20px; }
-h1 { text-align: center; }
-select, input, button { width: 100%; padding: 10px; margin: 8px 0; }
-button { background: black; color: white; border: none; cursor: pointer; }
-button:disabled { background: gray; }
-.slot { display: inline-block; padding: 8px 10px; margin: 4px; border: 1px solid #000; cursor: pointer; }
-.slot.disabled { background: #ddd; cursor: not-allowed; }
-.slot.selected { background: black; color: white; }
-.msg { padding:10px; margin:10px 0; text-align:center; }
-.ok { background:#d4edda; }
-.err { background:#f8d7da; }
+:root{
+  --bg:#f5f5f5;
+  --card:#ffffff;
+  --primary:#111;
+  --accent:#000;
+}
+.dark{
+  --bg:#1a1a1a;
+  --card:#2a2a2a;
+  --primary:#fff;
+}
+body{
+  font-family:Arial;
+  background:var(--bg);
+  color:var(--primary);
+  max-width:500px;
+  margin:auto;
+  padding:20px;
+}
+.card{
+  background:var(--card);
+  padding:20px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+input,select,button{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+}
+button{
+  background:#000;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+.slot{
+  padding:10px;
+  margin:5px 0;
+  border:1px solid #ccc;
+  cursor:pointer;
+}
+.slot.ocupado{
+  background:#ddd;
+  pointer-events:none;
+}
 </style>
 </head>
 <body>
 
-<h1>Reservar Cita</h1>
+<h2 id="titulo">Reservar Cita</h2>
 
-<div id="mensaje"></div>
-
-<label>Fecha</label>
-<input type="date" id="fecha">
-
-<label>Servicio</label>
+<div class="card">
 <select id="servicio"></select>
+<input type="date" id="fecha">
+<div id="horas"></div>
+</div>
 
-<div id="slots"></div>
-
-<input type="text" id="nombre" placeholder="Nombre completo">
-<input type="tel" id="telefono" placeholder="Teléfono">
+<div class="card">
+<input type="text" id="nombre" placeholder="Nombre">
+<input type="text" id="telefono" placeholder="Teléfono">
 <input type="email" id="email" placeholder="Email">
-
-<button id="reservar">Reservar</button>
+<button onclick="reservar()">Reservar</button>
+</div>
 
 <script>
 
-const API = "https://script.google.com/macros/s/AKfycbw6MIsDhxzQJx9Ti4POvhHnwLCfZt-KN99OU9z7IpyAjPrPLuwMOPQ17jnHcF9GWdFebA/exec";
+const API="https://script.google.com/macros/s/AKfycbw6MIsDhxzQJx9Ti4POvhHnwLCfZt-KN99OU9z7IpyAjPrPLuwMOPQ17jnHcF9GWdFebA/exec";
 
-let config, servicios, citas;
-let selectedHora = null;
+let servicios=[];
+let seleccionHora=null;
 
-async function api(action, payload = {}) {
-  const res = await fetch(API, {
-    method: "POST",
-    body: JSON.stringify({ action, payload })
+async function init(){
+  const conf=await fetch(API+"?action=config").then(r=>r.json());
+  document.getElementById("titulo").innerText=conf.negocio;
+
+  servicios=await fetch(API+"?action=servicios").then(r=>r.json());
+
+  const sel=document.getElementById("servicio");
+  servicios.forEach(s=>{
+    const o=document.createElement("option");
+    o.value=s.id;
+    o.textContent=s.nombre+" - "+s.precio+"€";
+    sel.appendChild(o);
   });
-  return await res.json();
 }
 
-function showMsg(text, type="ok") {
-  const m = document.getElementById("mensaje");
-  m.className = "msg " + (type==="ok" ? "ok":"err");
-  m.textContent = text;
-}
+document.getElementById("fecha").addEventListener("change",cargarHoras);
 
-async function init() {
+async function cargarHoras(){
+  const fecha=document.getElementById("fecha").value;
+  const data=await fetch(API+"?action=citasDia&fecha="+fecha).then(r=>r.json());
 
-  // Detectar cancelación desde email
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("cancel")) {
-    const id = params.get("cancel");
-    const res = await fetch(API + "?action=cancelCita&id=" + id).then(r=>r.json());
-    if (res.success) showMsg("Cita cancelada correctamente");
-    else showMsg("Error al cancelar cita","err");
-    return;
-  }
+  const horasDiv=document.getElementById("horas");
+  horasDiv.innerHTML="";
+  seleccionHora=null;
 
-  config = await fetch(API + "?action=getConfig").then(r=>r.json());
-  servicios = await fetch(API + "?action=getServicios").then(r=>r.json());
-  citas = await fetch(API + "?action=getCitas").then(r=>r.json());
+  const apertura=9;
+  const cierre=20;
 
-  // Limitar fechas
-  const inputFecha = document.getElementById("fecha");
-  const hoy = new Date();
-  const limite = new Date();
-  limite.setDate(hoy.getDate() + Number(config.maxDias));
+  for(let h=apertura;h<cierre;h++){
+    for(let m=0;m<60;m+=30){
+      const hora=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
+      const ocupado=data.some(c=>c[2]===hora && c[8]==="confirmada");
 
-  inputFecha.min = hoy.toISOString().split("T")[0];
-  inputFecha.max = limite.toISOString().split("T")[0];
+      const div=document.createElement("div");
+      div.className="slot"+(ocupado?" ocupado":"");
+      div.textContent=hora;
 
-  // Cargar servicios
-  const select = document.getElementById("servicio");
-  servicios.forEach(s => {
-    const opt = document.createElement("option");
-    opt.value = s.id;
-    opt.textContent = s.nombre + " (" + s.duracion + " min)";
-    select.appendChild(opt);
-  });
+      if(!ocupado){
+        div.onclick=()=>{
+          document.querySelectorAll(".slot").forEach(x=>x.style.background="");
+          div.style.background="#000";
+          div.style.color="#fff";
+          seleccionHora=hora;
+        }
+      }
 
-  inputFecha.addEventListener("change", generarSlots);
-  select.addEventListener("change", generarSlots);
-}
-
-function generarSlots() {
-
-  const fecha = document.getElementById("fecha").value;
-  const servicioId = document.getElementById("servicio").value;
-  const servicio = servicios.find(s => s.id == servicioId);
-  const cont = document.getElementById("slots");
-
-  cont.innerHTML = "";
-  selectedHora = null;
-
-  if (!fecha || !servicio) return;
-
-  const apertura = toMin(config.apertura);
-  const cierre = toMin(config.cierre);
-  const intervalo = Number(config.intervalo);
-
-  for (let min = apertura; min < cierre; min += intervalo) {
-
-    const hora = fromMin(min);
-    const btn = document.createElement("div");
-    btn.textContent = hora;
-    btn.className = "slot";
-
-    const ahora = new Date();
-    const fechaHora = new Date(fecha + "T" + hora);
-
-    if (fechaHora < ahora) {
-      btn.classList.add("disabled");
-      cont.appendChild(btn);
-      continue;
+      horasDiv.appendChild(div);
     }
-
-    if (estaOcupado(fecha, hora, servicio.duracion)) {
-      btn.classList.add("disabled");
-    } else {
-      btn.onclick = () => {
-        document.querySelectorAll(".slot").forEach(s=>s.classList.remove("selected"));
-        btn.classList.add("selected");
-        selectedHora = hora;
-      };
-    }
-
-    cont.appendChild(btn);
   }
 }
 
-function estaOcupado(fecha, hora, duracion) {
+async function reservar(){
 
-  const inicioNueva = new Date(fecha + "T" + hora);
-  const finNueva = new Date(inicioNueva.getTime() + duracion * 60000);
+  if(!seleccionHora) return alert("Selecciona hora");
 
-  return citas.some(c => {
-    if (c[1] !== fecha) return false;
-    if (c[8] !== "confirmada") return false;
+  const payload={
+    action:"addCita",
+    fecha:fecha.value,
+    hora:seleccionHora,
+    servicio:servicio.value,
+    nombre:nombre.value,
+    telefono:telefono.value,
+    email:email.value
+  };
 
-    const inicioExistente = new Date(c[1] + "T" + c[2]);
-    const finExistente = new Date(inicioExistente.getTime() + c[4] * 60000);
+  const res=await fetch(API,{
+    method:"POST",
+    body:JSON.stringify(payload)
+  }).then(r=>r.json());
 
-    return inicioNueva < finExistente && finNueva > inicioExistente;
-  });
-}
-
-function toMin(h) {
-  const [hh, mm] = h.split(":");
-  return Number(hh) * 60 + Number(mm);
-}
-
-function fromMin(m) {
-  const hh = String(Math.floor(m/60)).padStart(2,"0");
-  const mm = String(m%60).padStart(2,"0");
-  return hh + ":" + mm;
-}
-
-document.getElementById("reservar").onclick = async () => {
-
-  const fecha = document.getElementById("fecha").value;
-  const servicioId = document.getElementById("servicio").value;
-  const nombre = document.getElementById("nombre").value.trim();
-  const telefono = document.getElementById("telefono").value.trim();
-  const email = document.getElementById("email").value.trim();
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  if (!fecha || !selectedHora || !nombre || !email) {
-    showMsg("Completa todos los campos","err");
-    return;
+  if(res.ok){
+    alert("Cita confirmada");
+    cargarHoras();
+  }else{
+    alert(res.error);
   }
-
-  if (!emailRegex.test(email)) {
-    showMsg("Email inválido","err");
-    return;
-  }
-
-  // Recargar citas antes de enviar (anti doble reserva)
-  citas = await fetch(API + "?action=getCitas").then(r=>r.json());
-
-  const res = await api("addCita", {
-    fecha,
-    hora: selectedHora,
-    servicioId,
-    nombre,
-    telefono,
-    email
-  });
-
-  if (res.error) {
-    showMsg(res.error,"err");
-  } else {
-    showMsg("Cita confirmada. Revisa tu email.");
-    setTimeout(()=>location.reload(),2000);
-  }
-};
+}
 
 init();
-
 </script>
 </body>
 </html>
