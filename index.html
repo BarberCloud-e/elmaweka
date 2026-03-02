@@ -3,160 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Reservar Cita</title>
+<title>Reserva tu cita</title>
+
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
 
 <style>
-:root{
-  --bg:#f5f5f5;
-  --card:#ffffff;
-  --primary:#111;
-  --accent:#000;
-}
-.dark{
-  --bg:#1a1a1a;
-  --card:#2a2a2a;
-  --primary:#fff;
-}
 body{
-  font-family:Arial;
-  background:var(--bg);
-  color:var(--primary);
-  max-width:500px;
-  margin:auto;
-  padding:20px;
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+  background:#f2f2f7;
 }
-.card{
-  background:var(--card);
-  padding:20px;
-  border-radius:10px;
-  margin-bottom:15px;
+header{
+  background:#000;
+  color:#fff;
+  padding:15px;
+  text-align:center;
+  font-size:18px;
 }
-input,select,button{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
+#calendar{
+  max-width:900px;
+  margin:30px auto;
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
 }
 button{
   background:#000;
   color:#fff;
   border:none;
-  cursor:pointer;
-}
-.slot{
-  padding:10px;
-  margin:5px 0;
-  border:1px solid #ccc;
-  cursor:pointer;
-}
-.slot.ocupado{
-  background:#ddd;
-  pointer-events:none;
+  padding:8px 12px;
+  border-radius:6px;
 }
 </style>
 </head>
 <body>
 
-<h2 id="titulo">Reservar Cita</h2>
+<header id="negocio">Barbería</header>
 
-<div class="card">
-<select id="servicio"></select>
-<input type="date" id="fecha">
-<div id="horas"></div>
-</div>
+<div id="calendar"></div>
 
-<div class="card">
-<input type="text" id="nombre" placeholder="Nombre">
-<input type="text" id="telefono" placeholder="Teléfono">
-<input type="email" id="email" placeholder="Email">
-<button onclick="reservar()">Reservar</button>
-</div>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
 
 <script>
 
 const API="https://script.google.com/macros/s/AKfycbw6MIsDhxzQJx9Ti4POvhHnwLCfZt-KN99OU9z7IpyAjPrPLuwMOPQ17jnHcF9GWdFebA/exec";
 
-let servicios=[];
-let seleccionHora=null;
+document.addEventListener('DOMContentLoaded', async function() {
 
-async function init(){
   const conf=await fetch(API+"?action=config").then(r=>r.json());
-  document.getElementById("titulo").innerText=conf.negocio;
+  document.getElementById("negocio").innerText=conf.negocio;
 
-  servicios=await fetch(API+"?action=servicios").then(r=>r.json());
+  const calendarEl = document.getElementById('calendar');
 
-  const sel=document.getElementById("servicio");
-  servicios.forEach(s=>{
-    const o=document.createElement("option");
-    o.value=s.id;
-    o.textContent=s.nombre+" - "+s.precio+"€";
-    sel.appendChild(o);
-  });
-}
+  const calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    selectable:true,
 
-document.getElementById("fecha").addEventListener("change",cargarHoras);
+    dateClick: function(info) {
+      const fecha=info.dateStr;
+      const hora=prompt("Hora (ej: 14:00)");
+      const nombre=prompt("Nombre");
 
-async function cargarHoras(){
-  const fecha=document.getElementById("fecha").value;
-  const data=await fetch(API+"?action=citasDia&fecha="+fecha).then(r=>r.json());
+      if(!hora||!nombre) return;
 
-  const horasDiv=document.getElementById("horas");
-  horasDiv.innerHTML="";
-  seleccionHora=null;
-
-  const apertura=9;
-  const cierre=20;
-
-  for(let h=apertura;h<cierre;h++){
-    for(let m=0;m<60;m+=30){
-      const hora=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0");
-      const ocupado=data.some(c=>c[2]===hora && c[8]==="confirmada");
-
-      const div=document.createElement("div");
-      div.className="slot"+(ocupado?" ocupado":"");
-      div.textContent=hora;
-
-      if(!ocupado){
-        div.onclick=()=>{
-          document.querySelectorAll(".slot").forEach(x=>x.style.background="");
-          div.style.background="#000";
-          div.style.color="#fff";
-          seleccionHora=hora;
+      fetch(API,{
+        method:"POST",
+        body:JSON.stringify({
+          action:"addCita",
+          fecha:fecha,
+          hora:hora,
+          servicio:1,
+          nombre:nombre,
+          telefono:"",
+          email:""
+        })
+      })
+      .then(r=>r.json())
+      .then(res=>{
+        if(res.ok){
+          alert("Reserva confirmada");
+          calendar.refetchEvents();
+        }else{
+          alert(res.error);
         }
-      }
+      });
+    },
 
-      horasDiv.appendChild(div);
+    events: async function(fetchInfo, successCallback) {
+      const fecha=fetchInfo.startStr.slice(0,7);
+      const res=await fetch(API+"?action=citasDia&fecha="+fetchInfo.startStr.slice(0,10)).then(r=>r.json());
+
+      const eventos=res.map(c=>({
+        title:c[5],
+        start:c[1]+"T"+c[2]
+      }));
+
+      successCallback(eventos);
     }
-  }
-}
 
-async function reservar(){
+  });
 
-  if(!seleccionHora) return alert("Selecciona hora");
-
-  const payload={
-    action:"addCita",
-    fecha:fecha.value,
-    hora:seleccionHora,
-    servicio:servicio.value,
-    nombre:nombre.value,
-    telefono:telefono.value,
-    email:email.value
-  };
-
-  const res=await fetch(API,{
-    method:"POST",
-    body:JSON.stringify(payload)
-  }).then(r=>r.json());
-
-  if(res.ok){
-    alert("Cita confirmada");
-    cargarHoras();
-  }else{
-    alert(res.error);
-  }
-}
-
-init();
+  calendar.render();
+});
 </script>
+
 </body>
 </html>
