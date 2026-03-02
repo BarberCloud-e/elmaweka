@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Reservar Cita - Barbería Maweka</title>
+
 <style>
 body { font-family: Arial; max-width: 500px; margin: auto; padding: 20px; }
 h1 { text-align: center; }
@@ -13,11 +14,16 @@ button:disabled { background: gray; }
 .slot { display: inline-block; padding: 8px 10px; margin: 4px; border: 1px solid #000; cursor: pointer; }
 .slot.disabled { background: #ddd; cursor: not-allowed; }
 .slot.selected { background: black; color: white; }
+.msg { padding:10px; margin:10px 0; text-align:center; }
+.ok { background:#d4edda; }
+.err { background:#f8d7da; }
 </style>
 </head>
 <body>
 
 <h1>Reservar Cita</h1>
+
+<div id="mensaje"></div>
 
 <label>Fecha</label>
 <input type="date" id="fecha">
@@ -48,18 +54,38 @@ async function api(action, payload = {}) {
   return await res.json();
 }
 
+function showMsg(text, type="ok") {
+  const m = document.getElementById("mensaje");
+  m.className = "msg " + (type==="ok" ? "ok":"err");
+  m.textContent = text;
+}
+
 async function init() {
+
+  // Detectar cancelación desde email
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("cancel")) {
+    const id = params.get("cancel");
+    const res = await fetch(API + "?action=cancelCita&id=" + id).then(r=>r.json());
+    if (res.success) showMsg("Cita cancelada correctamente");
+    else showMsg("Error al cancelar cita","err");
+    return;
+  }
+
   config = await fetch(API + "?action=getConfig").then(r=>r.json());
   servicios = await fetch(API + "?action=getServicios").then(r=>r.json());
   citas = await fetch(API + "?action=getCitas").then(r=>r.json());
-const inputFecha = document.getElementById("fecha");
-const hoy = new Date();
-const limite = new Date();
-limite.setDate(hoy.getDate() + Number(config.maxDias));
 
-inputFecha.min = hoy.toISOString().split("T")[0];
-inputFecha.max = limite.toISOString().split("T")[0];
-  
+  // Limitar fechas
+  const inputFecha = document.getElementById("fecha");
+  const hoy = new Date();
+  const limite = new Date();
+  limite.setDate(hoy.getDate() + Number(config.maxDias));
+
+  inputFecha.min = hoy.toISOString().split("T")[0];
+  inputFecha.max = limite.toISOString().split("T")[0];
+
+  // Cargar servicios
   const select = document.getElementById("servicio");
   servicios.forEach(s => {
     const opt = document.createElement("option");
@@ -68,14 +94,17 @@ inputFecha.max = limite.toISOString().split("T")[0];
     select.appendChild(opt);
   });
 
-  document.getElementById("fecha").addEventListener("change", generarSlots);
+  inputFecha.addEventListener("change", generarSlots);
+  select.addEventListener("change", generarSlots);
 }
 
 function generarSlots() {
+
   const fecha = document.getElementById("fecha").value;
   const servicioId = document.getElementById("servicio").value;
   const servicio = servicios.find(s => s.id == servicioId);
   const cont = document.getElementById("slots");
+
   cont.innerHTML = "";
   selectedHora = null;
 
@@ -86,19 +115,22 @@ function generarSlots() {
   const intervalo = Number(config.intervalo);
 
   for (let min = apertura; min < cierre; min += intervalo) {
+
     const hora = fromMin(min);
     const btn = document.createElement("div");
     btn.textContent = hora;
     btn.className = "slot";
 
     const ahora = new Date();
-const fechaHora = new Date(fecha + "T" + hora);
-if (fechaHora < ahora) {
-  btn.classList.add("disabled");
-  cont.appendChild(btn);
-  continue;
-}
-      if (estaOcupado(fecha, hora, servicio.duracion)) {
+    const fechaHora = new Date(fecha + "T" + hora);
+
+    if (fechaHora < ahora) {
+      btn.classList.add("disabled");
+      cont.appendChild(btn);
+      continue;
+    }
+
+    if (estaOcupado(fecha, hora, servicio.duracion)) {
       btn.classList.add("disabled");
     } else {
       btn.onclick = () => {
@@ -113,13 +145,17 @@ if (fechaHora < ahora) {
 }
 
 function estaOcupado(fecha, hora, duracion) {
+
   const inicioNueva = new Date(fecha + "T" + hora);
   const finNueva = new Date(inicioNueva.getTime() + duracion * 60000);
 
   return citas.some(c => {
     if (c[1] !== fecha) return false;
+    if (c[8] !== "confirmada") return false;
+
     const inicioExistente = new Date(c[1] + "T" + c[2]);
     const finExistente = new Date(inicioExistente.getTime() + c[4] * 60000);
+
     return inicioNueva < finExistente && finNueva > inicioExistente;
   });
 }
@@ -136,21 +172,28 @@ function fromMin(m) {
 }
 
 document.getElementById("reservar").onclick = async () => {
+
   const fecha = document.getElementById("fecha").value;
   const servicioId = document.getElementById("servicio").value;
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-if (!emailRegex.test(email)) {
-  alert("Email inválido");
-  return;
-}
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   if (!fecha || !selectedHora || !nombre || !email) {
-    alert("Completa todos los campos");
+    showMsg("Completa todos los campos","err");
     return;
   }
-citas = await fetch(API + "?action=getCitas").then(r=>r.json());
+
+  if (!emailRegex.test(email)) {
+    showMsg("Email inválido","err");
+    return;
+  }
+
+  // Recargar citas antes de enviar (anti doble reserva)
+  citas = await fetch(API + "?action=getCitas").then(r=>r.json());
+
   const res = await api("addCita", {
     fecha,
     hora: selectedHora,
@@ -161,10 +204,10 @@ citas = await fetch(API + "?action=getCitas").then(r=>r.json());
   });
 
   if (res.error) {
-    alert(res.error);
+    showMsg(res.error,"err");
   } else {
-    alert("Cita confirmada. Revisa tu email.");
-    location.reload();
+    showMsg("Cita confirmada. Revisa tu email.");
+    setTimeout(()=>location.reload(),2000);
   }
 };
 
