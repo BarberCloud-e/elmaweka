@@ -52,7 +52,14 @@ async function init() {
   config = await fetch(API + "?action=getConfig").then(r=>r.json());
   servicios = await fetch(API + "?action=getServicios").then(r=>r.json());
   citas = await fetch(API + "?action=getCitas").then(r=>r.json());
+const inputFecha = document.getElementById("fecha");
+const hoy = new Date();
+const limite = new Date();
+limite.setDate(hoy.getDate() + Number(config.maxDias));
 
+inputFecha.min = hoy.toISOString().split("T")[0];
+inputFecha.max = limite.toISOString().split("T")[0];
+  
   const select = document.getElementById("servicio");
   servicios.forEach(s => {
     const opt = document.createElement("option");
@@ -84,7 +91,14 @@ function generarSlots() {
     btn.textContent = hora;
     btn.className = "slot";
 
-    if (estaOcupado(fecha, hora, servicio.duracion)) {
+    const ahora = new Date();
+const fechaHora = new Date(fecha + "T" + hora);
+if (fechaHora < ahora) {
+  btn.classList.add("disabled");
+  cont.appendChild(btn);
+  continue;
+}
+      if (estaOcupado(fecha, hora, servicio.duracion)) {
       btn.classList.add("disabled");
     } else {
       btn.onclick = () => {
@@ -127,12 +141,16 @@ document.getElementById("reservar").onclick = async () => {
   const nombre = document.getElementById("nombre").value.trim();
   const telefono = document.getElementById("telefono").value.trim();
   const email = document.getElementById("email").value.trim();
-
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+if (!emailRegex.test(email)) {
+  alert("Email inválido");
+  return;
+}
   if (!fecha || !selectedHora || !nombre || !email) {
     alert("Completa todos los campos");
     return;
   }
-
+citas = await fetch(API + "?action=getCitas").then(r=>r.json());
   const res = await api("addCita", {
     fecha,
     hora: selectedHora,
