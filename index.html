@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>El Maweka – Barbería</title>
+<title>Barbería – El Maweka</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400;600;700&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -362,7 +362,7 @@ input[type=time]{width:auto;padding:4px 7px;font-size:11px}
 </header>
 
 <main id="app"></main>
-<footer>© 2026 El Maweka — Todos los derechos reservados</footer>
+<footer>© 2026 Barbería El Maweka — Todos los derechos reservados</footer>
 
 <script>
 "use strict";
@@ -756,9 +756,9 @@ function buildGoogleCalURL(wz,sv,barberName){
   let eh=hh, em=mm+dur;
   eh+=Math.floor(em/60); em=em%60;
   const endDt=dtFmt(y,m,d,eh,em);
-  const title=encodeURIComponent(`Cita El Maweka – ${sv?.name||"Servicio"}`);
+  const title=encodeURIComponent(`Cita Barbería El Maweka – ${sv?.name||"Servicio"}`);
   const details=encodeURIComponent(`Barbero: ${barberName}\nServicio: ${sv?.name||""}\nCliente: ${wz.name}\nTeléfono: ${wz.phone}${wz.notes?"\nNotas: "+wz.notes:""}`);
-  const loc=encodeURIComponent("El Maweka Barbershop");
+  const loc=encodeURIComponent("Barbería El Maweka ");
   return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDt}/${endDt}&details=${details}&location=${loc}`;
 }
 
@@ -781,7 +781,7 @@ function stepConfirm(app){
   gcalBtn.onclick=()=>window.open(gcalMsg,"_blank");
   box.appendChild(gcalBtn);
   // Botón WhatsApp al barbero
-  const waBarbMsg=encodeURIComponent(`Hola El Maweka! Soy ${WZ.name}, acabo de reservar una cita:\n📅 ${fmtDate(WZ.date)}\n🕐 ${WZ.slot}\n✂️ ${sv?.name||""}\n💈 Barbero: ${barberName}\n📞 Mi teléfono: ${WZ.phone}\n¡Confirmo mi asistencia!`);
+  const waBarbMsg=encodeURIComponent(`Hola Maweka! Soy ${WZ.name}, acabo de reservar una cita:\n📅 ${fmtDate(WZ.date)}\n🕐 ${WZ.slot}\n✂️ ${sv?.name||""}\n💈 Barbero: ${barberName}\n📞 Mi teléfono: ${WZ.phone}\n¡Confirmo mi asistencia!`);
   const waBarbBtn=mk("button","btn-wa","💬 Confirmar por WhatsApp");
   waBarbBtn.style.cssText="width:100%;justify-content:center;padding:8px 14px;font-size:12px;font-weight:600;border-radius:8px;margin-bottom:8px";
   waBarbBtn.onclick=()=>window.open(`https://wa.me/${BARBER_PHONE}?text=${waBarbMsg}`,"_blank");
@@ -914,7 +914,7 @@ function tabCitas(cont){
     const acts=mk("div","apt-actions");
     // WhatsApp + llamar
     if(a.phone){
-      const waMsg=encodeURIComponent(`Hola ${a.name}, te confirmamos tu cita para el ${fmtDate(a.date)} a las ${normTime(a.time)} en El Maweka. ¡Te esperamos!`);
+      const waMsg=encodeURIComponent(`Hola ${a.name}, te confirmamos tu cita para el ${fmtDate(a.date)} a las ${normTime(a.time)} en Barbería El Maweka. ¡Te esperamos!`);
       const waB=mk("button","btn-wa","📱 WhatsApp");
       waB.onclick=()=>window.open(`https://wa.me/${a.phone.replace(/\D/g,"")}?text=${waMsg}`,"_blank");
       const callB=mk("button","btn-call","📞 Llamar");
@@ -969,7 +969,7 @@ function exportPDF(){
     try{ doc.addImage(LOGO,'PNG',6,4,20,20); }catch(e){}
     // Título
     doc.setTextColor(...gold); doc.setFont("helvetica","bold"); doc.setFontSize(16);
-    doc.text("EL MAWEKA — BARBERÍA",30,13);
+    doc.text("BARBERÍA — EL MAWEKA",30,13);
     doc.setFont("helvetica","normal"); doc.setFontSize(8);
     doc.setTextColor(122,104,68);
     doc.text("Reporte de Citas · "+filterLabel[CF]+" · "+today,30,20);
@@ -1026,7 +1026,7 @@ function exportPDF(){
     doc.setDrawColor(...gold); doc.setLineWidth(0.4);
     doc.line(8,H-12,W-8,H-12);
     doc.setTextColor(60,50,30); doc.setFontSize(7);
-    doc.text("El Maweka Barbería · Generado el "+new Date().toLocaleString("es-ES"),W/2,H-7,{align:"center"});
+    doc.text("Barbería El Maweka  · Generado el "+new Date().toLocaleString("es-ES"),W/2,H-7,{align:"center"});
   }
 
   doc.save("citas_maweka_"+today+".pdf");
@@ -1213,7 +1213,7 @@ function exportEarningsPDF(data){
   // ── FOOTER ──
   doc.setDrawColor(...gold); doc.setLineWidth(0.4); doc.line(10,H-14,W-10,H-14);
   doc.setFont("helvetica","normal"); doc.setFontSize(7); doc.setTextColor(...muted);
-  doc.text("El Maweka Barbería · Reporte confidencial",W/2,H-8,{align:"center"});
+  doc.text("Barbería El Maweka · Reporte confidencial",W/2,H-8,{align:"center"});
 
   doc.save("ganancias_maweka_"+today+".pdf");
   toast("PDF descargado","ok");
