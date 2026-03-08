@@ -699,8 +699,19 @@ function stepForm(card){
 
   const form=mk("div","fform");
   const nameI=document.createElement("input"); nameI.type="text"; nameI.placeholder="Nombre completo *"; nameI.value=WZ.name; nameI.autocomplete="name";
-  const phoneI=document.createElement("input"); phoneI.type="tel"; phoneI.placeholder="Teléfono * (solo números)"; phoneI.value=WZ.phone; phoneI.inputMode="numeric";
-  phoneI.addEventListener("input",()=>{ phoneI.value=phoneI.value.replace(/\D/g,""); WZ.phone=phoneI.value; evalBtn(); });
+  const phoneI=document.createElement("input"); 
+  phoneI.type="tel"; 
+  phoneI.placeholder="Teléfono"; 
+  phoneI.value=WZ.phone; 
+  phoneI.inputMode="numeric";
+  phoneI.maxLength=8; // Esto evita que escriban más de 8 números
+  phoneI.addEventListener("input",()=>{ 
+  phoneI.value=phoneI.value.replace(/\D/g,""); 
+  // Si empieza por algo que no sea 5, avisamos con color
+  phoneI.style.color = (phoneI.value.length > 0 && !phoneI.value.startsWith("5")) ? "#ff4444" : "";
+  WZ.phone=phoneI.value; 
+  evalBtn(); 
+});
   const notesI=document.createElement("textarea"); notesI.placeholder="Notas (opcional)"; notesI.value=WZ.notes;
   [nameI,phoneI,notesI].forEach(e=>form.appendChild(e));
   card.appendChild(form);
@@ -710,8 +721,12 @@ function stepForm(card){
 
   const confBtn=mk("button","btn","Confirmar Cita ✓");
   function evalBtn(){
-    confBtn.disabled=!(nameI.value.trim()&&phoneI.value.trim());
-  }
+  const tel = phoneI.value.trim();
+  const esTelCuba = /^5\d{7}$/.test(tel); // Valida: empieza por 5 y tiene 8 dígitos
+  const tieneNombre = nameI.value.trim().length >= 2; // Al menos 2 letras
+  
+  confBtn.disabled = !(tieneNombre && esTelCuba);
+}
   nameI.addEventListener("input",()=>{ WZ.name=nameI.value; evalBtn(); });
   notesI.addEventListener("input",()=>{ WZ.notes=notesI.value; });
   evalBtn();
