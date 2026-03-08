@@ -744,6 +744,76 @@ function stepForm(card){
   card.appendChild(confBtn);
 }
 
+  // Asegúrate de que este código esté dentro de la función donde generas la interfaz
+try {
+    const { startDt, endDt } = getDates(WZ, sv); // WZ y sv deben existir aquí
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+    
+    // Usamos variables locales para evitar conflictos
+    const appointmentTitle = `Cita Barbería El Maweka – ${sv?.name || "Servicio"}`;
+    const appointmentLoc = "Barbería El Maweka";
+    const currentBarber = barberName || "No asignado"; 
+
+    // Solo creamos el botón si la función mk existe
+    if (typeof mk === 'function') {
+        const calBtn = mk("button", "btn-calendar", "📅 Agendar Cita");
+
+        calBtn.onclick = () => {
+            if (isIOS) {
+                // RUTA IPHONE
+                const descICS = `Barbero: ${currentBarber}\\nServicio: ${sv?.name || ""}\\nCliente: ${WZ.name}\\nTeléfono: ${WZ.phone}${WZ.notes ? "\\nNotas: " + WZ.notes : ""}`;
+                const icsContent = [
+                    "BEGIN:VCALENDAR",
+                    "VERSION:2.0",
+                    "BEGIN:VEVENT",
+                    `DTSTART:${startDt}`,
+                    `DTEND:${endDt}`,
+                    `SUMMARY:${appointmentTitle}`,
+                    `DESCRIPTION:${descICS}`,
+                    `LOCATION:${appointmentLoc}`,
+                    "END:VEVENT",
+                    "END:VCALENDAR"
+                ].join("\n");
+
+                const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download", "cita.ics");
+                link.click();
+                setTimeout(() => window.URL.revokeObjectURL(url), 100);
+            } else {
+                // RUTA ANDROID / PC
+                const descGCal = encodeURIComponent(`Barbero: ${currentBarber}\nServicio: ${sv?.name || ""}\nCliente: ${WZ.name}\nTeléfono: ${WZ.phone}${WZ.notes ? "\nNotas: " + WZ.notes : ""}`);
+                const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(appointmentTitle)}&dates=${startDt}/${endDt}&details=${descGCal}&location=${encodeURIComponent(appointmentLoc)}`;
+                window.open(gcalUrl, "_blank");
+            }
+        };
+
+        // Cambia 'box' por el contenedor que estés usando en tu código
+        if (typeof box !== 'undefined') {
+            box.appendChild(calBtn);
+        }
+    }
+} catch (error) {
+    console.error("Error al cargar el botón de calendario:", error);
+}
+
+// Mueve la función auxiliar fuera para que no estorbe
+function getDates(wz, sv) {
+    if (!wz || !wz.date || !wz.slot) return { startDt: "", endDt: "" };
+    const [y, m, d] = wz.date.split("-").map(Number);
+    const [hh, mm] = wz.slot.split(":").map(Number);
+    const dur = sv?.duration || 30;
+    const p = n => String(n).padStart(2, "0");
+    
+    const startDt = `${y}${p(m)}${p(d)}T${p(hh)}${p(mm)}00`;
+    let eh = hh, em = mm + dur;
+    eh += Math.floor(em / 60); em = em % 60;
+    const endDt = `${y}${p(m)}${p(d)}T${p(eh)}${p(em)}00`;
+    
+    return { startDt, endDt };
+}
 
 function stepConfirm(app){
   const sv=DB.services.find(s=>s.id===WZ.svc);
