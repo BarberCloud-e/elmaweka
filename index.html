@@ -22,15 +22,6 @@ body.light{
   --bg:#f5f2ec;--bg2:#ffffff;--bg3:#ede8df;--bg4:#e0d9cc;
   --border:#d4cbbf;--text:#1a1208;--muted:#7a6e60
 }
-/* Tema claro: overrides específicos */
-body.light .cd.off{color:#aaa;border-color:#ccc;opacity:.4}
-body.light .bb.on,.body.light .filt.on,.body.light .nbtn.on{color:#fff}
-body.light header{background:linear-gradient(160deg,#f5f2ec,#e8dece)}
-body.light .ch{color:#888}
-body.light .apt-extra{color:#888}
-body.light .lbl{color:#888}
-body.light #toast.err{background:#fff0f0}
-body.light #toast.ok{background:#f0fff4}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes pop{from{opacity:0;transform:scale(.93)}to{opacity:1;transform:scale(1)}}
@@ -64,7 +55,7 @@ header{background:linear-gradient(160deg,#0f0d0a,#1c1710);border-bottom:2px soli
 
 /* ── LAYOUT ── */
 main{max-width:1020px;margin:0 auto;padding:30px 18px;min-height:calc(100vh - 102px)}
-footer{text-align:center;padding:14px;border-top:1px solid var(--border);color:var(--muted);font-size:11px;letter-spacing:2px}
+footer{text-align:center;padding:14px;border-top:1px solid #1a1510;color:#383838;font-size:11px;letter-spacing:2px}
 
 /* ── LOADING ── */
 #lov{position:fixed;inset:0;background:#0d0b08e0;z-index:500;display:none;
@@ -116,7 +107,7 @@ footer{text-align:center;padding:14px;border-top:1px solid var(--border);color:v
 .cd.av{color:var(--text);border:1px solid var(--border);background:var(--bg3);cursor:pointer}
 .cd.av:hover{background:var(--bg4);border-color:var(--gold);transform:scale(1.08)}
 .cd.sel{background:var(--gold);color:#0d0b08;border:1px solid var(--gold)}
-.cd.off{color:#444;border:1px solid #333;opacity:.35}
+.cd.off{color:#1a1510;border:1px solid #0f0d0a}
 .cd.cl::after{content:'🔒';font-size:7px;position:absolute;bottom:1px;right:2px}
 .cal-leg{display:flex;align-items:center;gap:6px;margin-top:9px;font-size:10px;color:#444}
 .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:2px;vertical-align:middle}
@@ -133,21 +124,21 @@ footer{text-align:center;padding:14px;border-top:1px solid var(--border);color:v
   border-radius:7px;cursor:pointer;font-size:12px;font-weight:700;
   transition:all .13s;font-family:'Lato',sans-serif;line-height:1.3;width:100%;text-align:center}
 .sl:hover:not([disabled]){background:var(--bg4);border-color:var(--gold);transform:translateY(-2px)}
-.sl[disabled]{background:var(--bg2);border-color:var(--border);color:var(--muted);cursor:default;opacity:.45}
+.sl[disabled]{background:#0c0b08;border-color:#111;color:#252015;cursor:default}
 .sl .sub{display:block;font-size:9px;font-weight:600;letter-spacing:.3px;margin-top:1px}
 
 /* ── SERVICES ── */
 .svs{display:flex;flex-direction:column;gap:7px}
 .svi{background:var(--bg3);border:1px solid var(--border);border-radius:10px;
   padding:12px 15px;cursor:pointer;transition:all .2s}
-.svi:hover,.svi.on{border-color:var(--gold);background:var(--bg4);transform:translateX(3px)}
+.svi:hover,.svi.on{border-color:var(--gold);background:#1c1a11;transform:translateX(3px)}
 .sv-name{font-weight:700;color:var(--text);font-size:14px}
 .sv-meta{color:var(--muted);font-size:11px;margin-top:2px}
 .sv-price{color:var(--gold);font-weight:700}
 
 /* ── FORM ── */
-.sumbox{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:11px;margin-bottom:14px}
-.srow{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid var(--border);font-size:12px}
+.sumbox{background:#0d0b08;border:1px solid #1a1510;border-radius:8px;padding:11px;margin-bottom:14px}
+.srow{display:flex;justify-content:space-between;padding:3px 0;border-bottom:1px solid #111;font-size:12px}
 .srow:last-child{border:none}
 .slb{color:var(--muted)}.svl{color:var(--text);font-weight:600;text-align:right;max-width:60%;text-transform:capitalize}
 .fform{display:flex;flex-direction:column;gap:9px;margin-bottom:14px}
@@ -198,6 +189,11 @@ input.err{border-color:var(--red)!important}
   cursor:pointer;font-size:11px;font-family:'Lato',sans-serif;
   white-space:nowrap;display:inline-flex;align-items:center;gap:4px;transition:opacity .2s}
 .btn-wa:hover{opacity:.85}
+.btn-gcal{background:#1a73e8;border:none;color:#fff;padding:8px 14px;border-radius:8px;
+  cursor:pointer;font-size:12px;font-family:'Lato',sans-serif;font-weight:600;
+  white-space:nowrap;display:flex;align-items:center;gap:6px;transition:opacity .2s;
+  width:100%;justify-content:center;margin-bottom:8px}
+.btn-gcal:hover{opacity:.88}
 .btn-call{background:transparent;border:1px solid #1e3a5f;color:#336688;padding:5px 10px;
   border-radius:6px;cursor:pointer;font-size:11px;font-family:'Lato',sans-serif;
   transition:all .2s;white-space:nowrap}
@@ -235,7 +231,7 @@ input.err{border-color:var(--red)!important}
 .badge-cancel{background:#1a1a1a;color:#666;border:1px solid #333}
 
 /* ── APT CARDS ── */
-.apt-card{display:flex;gap:10px;background:var(--bg2);border:1px solid var(--border);
+.apt-card{display:flex;gap:10px;background:#0d0b08;border:1px solid #1c1a11;
   border-radius:9px;padding:11px;align-items:flex-start;transition:border .2s}
 .apt-card:hover{border-color:var(--border)}
 .apt-date{text-align:center;min-width:44px}
@@ -248,7 +244,7 @@ input.err{border-color:var(--red)!important}
 .apt-actions{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;align-items:center}
 
 /* ── SERVICIOS ADMIN ── */
-.svc-card{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:12px 14px}
+.svc-card{background:#0d0b08;border:1px solid #1c1a11;border-radius:9px;padding:12px 14px}
 .svc-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
 .svc-name-big{font-weight:700;color:var(--text);font-size:13px;flex:1;min-width:90px}
 .svc-info{color:var(--muted);font-size:11px;display:flex;gap:7px}
@@ -285,9 +281,9 @@ input[type=time]{width:auto;padding:4px 7px;font-size:11px}
 .earn-amt{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:700}
 .earn-lbl{color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase;margin-top:3px}
 .earn-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}
-.earn-box{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:12px}
+.earn-box{background:#0d0b08;border:1px solid #1c1a11;border-radius:9px;padding:12px}
 .earn-box-t{color:var(--muted);font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px}
-.earn-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid var(--border)}
+.earn-row{display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid #111}
 .earn-row:last-child{border:none}
 .earn-n{color:var(--text)}.earn-v{color:var(--gold);font-weight:700}
 .earn-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
@@ -295,58 +291,32 @@ input[type=time]{width:auto;padding:4px 7px;font-size:11px}
 /* ── UTILS ── */
 .lbl{color:#777;font-size:11px;margin-bottom:2px;display:block}
 .err-msg{color:var(--red);font-size:12px;text-align:center;padding:3px}
-.empty{color:var(--muted);text-align:center;padding:28px;font-size:13px;font-style:italic}
+.empty{color:#333;text-align:center;padding:28px;font-size:13px;font-style:italic}
 .flex{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
 .col{display:flex;flex-direction:column;gap:5px}
 .ml{margin-left:auto}.mt{margin-top:16px}
 .slim{width:auto;padding:5px 7px;font-size:12px}
-.notice{background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+.notice{background:#1a1510;border:1px solid var(--border);border-radius:8px;
   padding:10px 14px;color:var(--muted);font-size:12px;line-height:1.6}
 .notice b{color:var(--text)}
-.sep{border:none;border-top:1px solid var(--border);margin:10px 0}
-.s-sec{background:var(--bg2);border:1px solid var(--border);border-radius:9px;padding:13px;margin-bottom:11px}
+.sep{border:none;border-top:1px solid #1a1510;margin:10px 0}
+.s-sec{background:#0d0b08;border:1px solid #1c1a11;border-radius:9px;padding:13px;margin-bottom:11px}
 .s-sec-t{color:var(--text);font-size:13px;font-weight:700;margin-bottom:9px;display:block}
-.manual-box{background:var(--bg2);border:1px solid var(--border);border-radius:9px;
+.manual-box{background:#0d0b08;border:1px solid #252015;border-radius:9px;
   padding:14px;margin-bottom:14px;display:none}
 .manual-box.open{display:block}
-.cl-row{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);
+.cl-row{display:flex;align-items:center;gap:8px;background:#0d0b08;border:1px solid #1c1a11;
   border-radius:7px;padding:9px 12px;flex-wrap:wrap}
 .cl-d{color:var(--gold);font-weight:700;font-size:12px;flex:1;text-transform:capitalize}
 .cl-lbl{color:var(--muted);font-size:11px}
-.bar-row{display:flex;align-items:center;gap:10px;background:var(--bg3);
-  border:1px solid var(--border);border-radius:9px;padding:11px 14px}
+.bar-row{display:flex;align-items:center;gap:10px;background:#0d0b08;
+  border:1px solid #1c1a11;border-radius:9px;padding:11px 14px}
 .bar-name{color:var(--text);font-weight:700;flex:1;font-size:13px}
 
 @media(max-width:540px){
   .hdr{height:auto;padding:9px 12px;flex-wrap:wrap;gap:7px}
-  .card,.tcontent{padding:12px}.tab{font-size:10px;padding:7px 8px}
+  .card,.tcontent{padding:14px}.tab{font-size:10px;padding:7px 9px}
   .earn-grid{grid-template-columns:1fr}.g3{grid-template-columns:1fr 1fr}
-  /* Calendario mobile */
-  .cal-grid{gap:1px}
-  .cd{padding:6px 1px;font-size:11px;min-height:30px}
-  .ch{font-size:8px;padding:4px 0}
-  /* Slots mobile */
-  .slots{grid-template-columns:repeat(auto-fill,minmax(68px,1fr));gap:4px}
-  .sl{padding:8px 2px;font-size:11px}
-  /* Header mobile */
-  .logo-name{font-size:14px;letter-spacing:2px}
-  .nbtn{font-size:11px;padding:5px 9px}
-  /* Tabs mobile */
-  .tabs{gap:2px}
-  /* Servicios */
-  .svc-row{gap:5px}
-  /* Botones acción */
-  .apt-actions{gap:3px}
-  .btn-sm{font-size:10px;padding:4px 8px}
-  /* Filtros */
-  .filt{padding:8px 2px;font-size:10px}
-  .filt .filt-n{font-size:14px}
-  .filt .filt-l{font-size:8px}
-  /* Panel admin */
-  .bar-row{flex-wrap:wrap;gap:7px}
-  .cl-row{flex-wrap:wrap;gap:6px}
-  /* Formularios */
-  .fform input,.fform select{font-size:14px}
 }
 
 /* ── FILTROS VISUALES ── */
@@ -424,7 +394,8 @@ function applyTheme(){
   if(btn) btn.textContent=DARK_MODE?"🌙":"☀️";
 }
 function mkWZ(){ const n=new Date(); return{step:1,date:null,slot:null,svc:null,barber:null,
-  name:"",phone:"",email:"",notes:"",cy:n.getFullYear(),cm:n.getMonth()}; }
+  name:"",phone:"",notes:"",cy:n.getFullYear(),cm:n.getMonth()}; }
+const BARBER_PHONE = "5355156481"; // Número WhatsApp del barbero
 
 function fmtMoney(amount, currency){
   const cur = currency || DB.config.currency || "€";
@@ -730,27 +701,24 @@ function stepForm(card){
   const nameI=document.createElement("input"); nameI.type="text"; nameI.placeholder="Nombre completo *"; nameI.value=WZ.name; nameI.autocomplete="name";
   const phoneI=document.createElement("input"); phoneI.type="tel"; phoneI.placeholder="Teléfono * (solo números)"; phoneI.value=WZ.phone; phoneI.inputMode="numeric";
   phoneI.addEventListener("input",()=>{ phoneI.value=phoneI.value.replace(/\D/g,""); WZ.phone=phoneI.value; evalBtn(); });
-  const emailI=document.createElement("input"); emailI.type="email"; emailI.placeholder="Correo electrónico * (para confirmación)"; emailI.value=WZ.email; emailI.autocomplete="email";
   const notesI=document.createElement("textarea"); notesI.placeholder="Notas (opcional)"; notesI.value=WZ.notes;
-  [nameI,phoneI,emailI,notesI].forEach(e=>form.appendChild(e));
+  [nameI,phoneI,notesI].forEach(e=>form.appendChild(e));
   card.appendChild(form);
 
-  const note=mk("p","",`<span style="color:#444;font-size:11px">* Campos obligatorios. Recibirás confirmación por email.</span>`);
+  const note=mk("p","",`<span style="color:#444;font-size:11px">* Campos obligatorios.</span>`);
   card.appendChild(note);
 
   const confBtn=mk("button","btn","Confirmar Cita ✓");
-  function validEmail(e){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
   function evalBtn(){
-    confBtn.disabled=!(nameI.value.trim()&&phoneI.value.trim()&&validEmail(emailI.value.trim()));
+    confBtn.disabled=!(nameI.value.trim()&&phoneI.value.trim());
   }
   nameI.addEventListener("input",()=>{ WZ.name=nameI.value; evalBtn(); });
-  emailI.addEventListener("input",()=>{ WZ.email=emailI.value; evalBtn(); });
   notesI.addEventListener("input",()=>{ WZ.notes=notesI.value; });
   evalBtn();
 
   confBtn.onclick=async()=>{
     WZ.name=nameI.value.trim(); WZ.phone=phoneI.value.trim();
-    WZ.email=emailI.value.trim(); WZ.notes=notesI.value.trim();
+    WZ.notes=notesI.value.trim();
     if(confBtn.disabled) return;
     showLoad();
     try{
@@ -766,7 +734,7 @@ function stepForm(card){
       await api("addAppointment",{
         date:WZ.date,time:WZ.slot,barber:barberName,
         svcId:WZ.svc,svcName:sv?.name,duration:sv?.duration,
-        name:WZ.name,phone:WZ.phone,email:WZ.email,notes:WZ.notes
+        name:WZ.name,phone:WZ.phone,notes:WZ.notes
       });
       await loadAll();
       WZ.step=5; render();
@@ -774,6 +742,24 @@ function stepForm(card){
     finally{ hideLoad(); }
   };
   card.appendChild(confBtn);
+}
+
+function buildGoogleCalURL(wz,sv,barberName){
+  // Builds a Google Calendar "add event" URL from wizard state
+  const [y,m,d]=wz.date.split("-").map(Number);
+  const [hh,mm]=wz.slot.split(":").map(Number);
+  const dur=sv?.duration||30;
+  const pad=n=>String(n).padStart(2,"0");
+  const dtFmt=(y,mo,da,h,mi)=>`${y}${pad(mo)}${pad(da)}T${pad(h)}${pad(mi)}00`;
+  const startDt=dtFmt(y,m,d,hh,mm);
+  // end time
+  let eh=hh, em=mm+dur;
+  eh+=Math.floor(em/60); em=em%60;
+  const endDt=dtFmt(y,m,d,eh,em);
+  const title=encodeURIComponent(`Cita El Maweka – ${sv?.name||"Servicio"}`);
+  const details=encodeURIComponent(`Barbero: ${barberName}\nServicio: ${sv?.name||""}\nCliente: ${wz.name}\nTeléfono: ${wz.phone}${wz.notes?"\nNotas: "+wz.notes:""}`);
+  const loc=encodeURIComponent("El Maweka Barbershop");
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDt}/${endDt}&details=${details}&location=${loc}`;
 }
 
 function stepConfirm(app){
@@ -786,16 +772,20 @@ function stepConfirm(app){
       ${[srow("Nombre",WZ.name),
          srow("Fecha",fmtDate(WZ.date,{weekday:"long",day:"numeric",month:"long",year:"numeric"})),
          srow("Hora",WZ.slot),srow("Servicio",sv?.name),srow("Barbero",barberName),
-         srow("Teléfono",WZ.phone),srow("Email",WZ.email)].join("")}
+         srow("Teléfono",WZ.phone)].join("")}
     </div>
-    <p style="color:var(--muted);font-size:11px">📧 Confirmación enviada a ${WZ.email}</p>`;
-  // WhatsApp al barbero
-  if(WZ.phone){
-    const waMsg=encodeURIComponent(`Hola ${WZ.name}! Tu cita en El Maweka ha sido confirmada:\n📅 ${fmtDate(WZ.date)}\n🕐 ${WZ.slot}\n✂️ ${sv?.name||""}\n¡Te esperamos!`);
-    const waBtn=mk("button","btn-wa","📱 Abrir WhatsApp");
-    waBtn.onclick=()=>window.open(`https://wa.me/${WZ.phone.replace(/\D/g,"")}?text=${waMsg}`,"_blank");
-    box.appendChild(waBtn);
-  }
+    <p style="color:var(--muted);font-size:11px">✅ Tu cita ha sido registrada exitosamente.</p>`;
+  // Botón Google Calendar
+  const gcalBtn=mk("button","btn-gcal","📅 Añadir al Calendario");
+  const gcalMsg=buildGoogleCalURL(WZ,sv,barberName);
+  gcalBtn.onclick=()=>window.open(gcalMsg,"_blank");
+  box.appendChild(gcalBtn);
+  // Botón WhatsApp al barbero
+  const waBarbMsg=encodeURIComponent(`Hola El Maweka! Soy ${WZ.name}, acabo de reservar una cita:\n📅 ${fmtDate(WZ.date)}\n🕐 ${WZ.slot}\n✂️ ${sv?.name||""}\n💈 Barbero: ${barberName}\n📞 Mi teléfono: ${WZ.phone}\n¡Confirmo mi asistencia!`);
+  const waBarbBtn=mk("button","btn-wa","💬 Confirmar por WhatsApp");
+  waBarbBtn.style.cssText="width:100%;justify-content:center;padding:8px 14px;font-size:12px;font-weight:600;border-radius:8px;margin-bottom:8px";
+  waBarbBtn.onclick=()=>window.open(`https://wa.me/${BARBER_PHONE}?text=${waBarbMsg}`,"_blank");
+  box.appendChild(waBarbBtn);
   const rb=mk("button","btn-ghost","Reservar otra cita"); rb.style.marginTop="2px";
   rb.onclick=()=>{ WZ=mkWZ(); if(DB.barbers.length) WZ.barber=DB.barbers[0].id; render(); };
   box.appendChild(rb); app.appendChild(box);
