@@ -744,68 +744,6 @@ function stepForm(card){
   card.appendChild(confBtn);
 }
 
-// --- FUNCIONES DE APOYO ---
-
-const pad = n => String(n).padStart(2, "0");
-const getDates = (wz, sv) => {
-    const [y, m, d] = wz.date.split("-").map(Number);
-    const [hh, mm] = wz.slot.split(":").map(Number);
-    const dur = sv?.duration || 30;
-    
-    const dtFmt = (y, mo, da, h, mi) => `${y}${pad(mo)}${pad(da)}T${pad(h)}${pad(mi)}00`;
-    const startDt = dtFmt(y, m, d, hh, mm);
-    
-    let eh = hh, em = mm + dur;
-    eh += Math.floor(em / 60); em = em % 60;
-    const endDt = dtFmt(y, m, d, eh, em);
-    
-    return { startDt, endDt };
-};
-
-// --- LÓGICA DEL BOTÓN ---
-
-const calBtn = mk("button", "btn-calendar", "📅 Agendar Cita");
-
-calBtn.onclick = () => {
-    const { startDt, endDt } = getDates(WZ, sv);
-    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-    const title = `Cita Barbería El Maweka – ${sv?.name || "Servicio"}`;
-    const loc = "Barbería El Maweka";
-
-    if (isIOS) {
-        // --- RUTA IPHONE (ARCHIVO ICS) ---
-        const descICS = `Barbero: ${barberName}\\nServicio: ${sv?.name || ""}\\nCliente: ${WZ.name}\\nTeléfono: ${WZ.phone}${WZ.notes ? "\\nNotas: " + WZ.notes : ""}`;
-        
-        const icsContent = [
-            "BEGIN:VCALENDAR",
-            "VERSION:2.0",
-            "BEGIN:VEVENT",
-            `DTSTART:${startDt}`,
-            `DTEND:${endDt}`,
-            `SUMMARY:${title}`,
-            `DESCRIPTION:${descICS}`,
-            `LOCATION:${loc}`,
-            "END:VEVENT",
-            "END:VCALENDAR"
-        ].join("\n");
-
-        const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "cita.ics");
-        link.click();
-        window.URL.revokeObjectURL(url); // Limpieza de memoria
-    } else {
-        // --- RUTA ANDROID/PC (GOOGLE CALENDAR) ---
-        const descGCal = encodeURIComponent(`Barbero: ${barberName}\nServicio: ${sv?.name || ""}\nCliente: ${WZ.name}\nTeléfono: ${WZ.phone}${WZ.notes ? "\nNotas: " + WZ.notes : ""}`);
-        const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(title)}&dates=${startDt}/${endDt}&details=${descGCal}&location=${encodeURIComponent(loc)}`;
-        
-        window.open(gcalUrl, "_blank");
-    }
-};
-
-box.appendChild(calBtn);
 
 function stepConfirm(app){
   const sv=DB.services.find(s=>s.id===WZ.svc);
