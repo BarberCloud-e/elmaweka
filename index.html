@@ -743,58 +743,6 @@ function stepForm(card){
   };
   card.appendChild(confBtn);
 }
-function buildCalendarAction(wz, sv, barberName) {
-  // 1. Extraer y formatear fechas (común para ambos)
-  const [y, m, d] = wz.date.split("-").map(Number);
-  const [hh, mm] = wz.slot.split(":").map(Number);
-  const dur = sv?.duration || 30;
-  const pad = n => String(n).padStart(2, "0");
-  const dtFmt = (y, mo, da, h, mi) => `${y}${pad(mo)}${pad(da)}T${pad(h)}${pad(mi)}00`;
-  
-  const startDt = dtFmt(y, m, d, hh, mm);
-  let eh = hh, em = mm + dur;
-  eh += Math.floor(em / 60); em = em % 60;
-  const endDt = dtFmt(y, m, d, eh, em);
-
-  const titleText = `Cita Barbería El Maweka – ${sv?.name || "Servicio"}`;
-  const locText = "Barbería El Maweka";
-  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-
-  if (isIOS) {
-    // --- LÓGICA IPHONE (Archivo .ics) ---
-    const detailsText = `Barbero: ${barberName}\\nServicio: ${sv?.name || ""}\\nCliente: ${wz.name}\\nTeléfono: ${wz.phone}${wz.notes ? "\\nNotas: " + wz.notes : ""}`;
-    
-    const icsContent = [
-      "BEGIN:VCALENDAR",
-      "VERSION:2.0",
-      "BEGIN:VEVENT",
-      `DTSTART:${startDt}`,
-      `DTEND:${endDt}`,
-      `SUMMARY:${titleText}`,
-      `DESCRIPTION:${detailsText}`,
-      `LOCATION:${locText}`,
-      "END:VEVENT",
-      "END:VCALENDAR"
-    ].join("\n");
-
-    const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "cita.ics");
-    link.click();
-    setTimeout(() => window.URL.revokeObjectURL(url), 100);
-
-  } else {
-    // --- LÓGICA ANDROID/PC (Google Calendar URL) ---
-    const title = encodeURIComponent(titleText);
-    const details = encodeURIComponent(`Barbero: ${barberName}\nServicio: ${sv?.name || ""}\nCliente: ${wz.name}\nTeléfono: ${wz.phone}${wz.notes ? "\nNotas: " + wz.notes : ""}`);
-    const loc = encodeURIComponent(locText);
-    const gCalURL = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${startDt}/${endDt}&details=${details}&location=${loc}`;
-    
-    window.open(gCalURL, "_blank");
-  }
-}
 
 
 
@@ -812,12 +760,7 @@ function stepConfirm(app){
     </div>
     <p style="color:var(--muted);font-size:11px">✅ Tu cita ha sido registrada exitosamente.</p>`;
 
-  // Reemplaza tu bloque del botón por este:
-const gcalBtn = mk("button", "btn-gcal", "📅 Añadir al Calendario");
-// Importante: No llamamos a la función aquí, la llamamos DENTRO del onclick 
-// para asegurar que WZ, sv y barberName tengan los datos finales.
-gcalBtn.onclick = () => buildCalendarAction(WZ, sv, barberName);
-box.appendChild(gcalBtn);
+
   // Botón WhatsApp al barbero
   const waBarbMsg=encodeURIComponent(`Hola Maweka! Soy ${WZ.name}, acabo de reservar una cita:\n📅 ${fmtDate(WZ.date)}\n🕐 ${WZ.slot}\n✂️ ${sv?.name||""}\n💈 Barbero: ${barberName}\n📞 Mi teléfono: ${WZ.phone}\n¡Confirmo mi asistencia!`);
   const waBarbBtn=mk("button","btn-wa","💬 Confirmar por WhatsApp");
