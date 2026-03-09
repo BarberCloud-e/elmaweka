@@ -31,80 +31,70 @@ body.light{
 input[type=date]::-webkit-calendar-picker-indicator,
 input[type=time]::-webkit-calendar-picker-indicator{filter:invert(.55)}
 
-/* ── HEADER: LOGO PROTAGONISTA ── */
+/* ── DISEÑO DE LOGO PROTAGONISTA ── */
 header {
   background: linear-gradient(160deg, #0f0d0a, #1c1710);
   border-bottom: 2px solid var(--gold);
   position: sticky;
   top: 0;
   z-index: 300;
-  box-shadow: 0 4px 24px #00000077;
-  padding: 25px 0; /* Aumentamos el espacio para que quepa el logo grande */
-  height: auto !important; /* Quitamos cualquier restricción de altura */
+  padding: 20px 0; /* Espacio extra vertical */
 }
+
 .hdr {
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 0 18px;
   display: flex;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e0e0e0;
+  justify-content: space-between; 
+  position: relative;
+  min-height: 150px; /* Altura suficiente para el logo grande */
 }
 
-.logo img, .logo svg {
-  height: 32px; /* Standard navbar logo size */
-  width: auto;
-}
-
-
-/* EL LOGO: FORZANDO TAMAÑO */
 .logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column; 
   align-items: center;
+  text-align: center;
   gap: 12px;
-  width: 100%; /* Que ocupe todo el ancho disponible */
 }
 
-/* Si es un ICONO de texto use font-size, si es IMAGEN use width */
-.logo-icon {
-  font-size: 120px !important; /* Gigante */
-  width: 120px !important;    /* Forzamos por si es una imagen */
-  height: auto;
-  line-height: 1;
-  display: block;
-  margin: 0 auto;
-  filter: drop-shadow(0 0 15px rgba(201, 168, 76, 0.4));
+.logo img {
+  width: 130px; /* Tamaño imponente */
+  height: 130px;
+  border-radius: 50%;
+  border: 3px solid var(--gold);
+  object-fit: cover;
+  box-shadow: 0 0 20px rgba(201, 168, 76, 0.2);
 }
 
 .logo-name {
   font-family: 'Playfair Display', serif;
-  font-size: 38px !important; /* Nombre mucho más grande */
+  font-size: 26px;
   color: var(--gold);
-  letter-spacing: 8px;
-  display: block;
-  text-align: center;
-  font-weight: 700;
+  letter-spacing: 6px;
   text-transform: uppercase;
+  line-height: 1;
 }
 
 .logo-sub {
-  font-size: 14px;
-  color: #7a6844;
-  letter-spacing: 6px;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 4px;
   text-transform: uppercase;
-  display: block;
-  margin-top: 5px;
-  text-align: center;
 }
 
-/* ── TUS BOTONES (Mantenidos intactos) ── */
-.hdr-right {
+/* Contenedores de botones laterales */
+.hdr-left, .hdr-right {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 10px;
+  gap: 10px;
+  z-index: 10; /* Para que sigan siendo clickeables */
 }
 
 .nbtn {
@@ -429,23 +419,25 @@ input[type=time]{width:auto;padding:4px 7px;font-size:11px}
 
 <header>
   <div class="hdr">
+    <!-- LADO IZQUIERDO: Ajustes -->
+    <div class="hdr-left">
+      <button class="theme-tog" onclick="toggleTheme()">🌙</button>
+      <button class="refresh-btn" onclick="location.reload()">↻</button>
+    </div>
+
+    <!-- CENTRO: El Maweka -->
     <div class="logo">
-  <!-- Modern SVG Gemini-style Sparkle -->
-  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z" fill="url(#grad)" />
-    <defs>
-      <linearGradient id="grad" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-        <stop stop-color="#4285F4" />
-        <stop offset="1" stop-color="#9b72cb" />
-      </linearGradient>
-    </defs>
-  </svg>
-</div>
-    <div class="hdr-right" id="hdr-right">
-      <button class="theme-tog" id="theme-btn" title="Modo claro/oscuro" onclick="toggleTheme()">🌙</button>
-      <button class="refresh-btn" id="rbtn" title="Actualizar datos" onclick="refresh()">↻</button>
+      <img src="TU_URL_DE_LOGO_AQUI" alt="El Maweka">
+      <div class="logo-text">
+        <div class="logo-name">EL MAWEKA</div>
+        <div class="logo-sub">Barbería de Élite</div>
+      </div>
+    </div>
+
+    <!-- LADO DERECHO: Navegación -->
+    <div class="hdr-right">
       <button class="nbtn on" id="v-client" onclick="setView('client')">Reservar</button>
-      <button class="nbtn"    id="v-admin"  onclick="setView('admin')">Barbero</button>
+      <button class="nbtn" id="v-admin" onclick="setView('admin')">Admin</button>
     </div>
   </div>
 </header>
