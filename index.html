@@ -32,15 +32,68 @@ input[type=date]::-webkit-calendar-picker-indicator,
 input[type=time]::-webkit-calendar-picker-indicator{filter:invert(.55)}
 
 /* ── HEADER ── */
-header{background:linear-gradient(160deg,#0f0d0a,#1c1710);border-bottom:2px solid var(--gold);
-  position:sticky;top:0;z-index:300;box-shadow:0 4px 24px #00000077}
-.hdr{max-width:1020px;margin:0 auto;padding:0 18px;display:flex;align-items:center;
-  justify-content:space-between;height:62px;gap:8px}
-.logo{display:flex;align-items:center;gap:9px;flex-shrink:0}
+/* ── HEADER CORREGIDO ── */
+header {
+  background: linear-gradient(160deg, #0f0d0a, #1c1710);
+  border-bottom: 2px solid var(--gold);
+  position: sticky;
+  top: 0;
+  z-index: 300;
+  box-shadow: 0 4px 24px #00000077;
+  padding: 10px 0; /* Añade espacio arriba y abajo */
+}
+
+.hdr {
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 80px; /* Aumentado para que quepa el logo */
+  gap: 20px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column; /* Pone el texto DEBAJO del círculo */
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.logo-img {
+  width: 100px;   /* Tamaño del círculo */
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+.logo-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--gold);
+  letter-spacing: 3px;
+  text-align: center;
+}
+
+.logo-sub {
+  font-size: 10px;
+  color: #7a6844;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-align: center;
+  margin-top: 2px;
+}
+
+.hdr-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 .logo-icon{font-size:27px;line-height:1}
-.logo-name{font-family:'Playfair Display',serif;font-size:17px;color:var(--gold);letter-spacing:3px;display:block}
-.logo-sub{font-size:9px;color:#7a6844;letter-spacing:3px;text-transform:uppercase;display:block;margin-top:-2px}
-.hdr-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .nbtn{background:transparent;border:1px solid #3a2e1e;color:var(--muted);padding:6px 12px;
   border-radius:5px;cursor:pointer;font-size:12px;letter-spacing:1px;
   font-family:'Lato',sans-serif;transition:all .2s;white-space:nowrap}
