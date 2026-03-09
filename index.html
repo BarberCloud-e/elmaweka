@@ -41,27 +41,24 @@ header {
   padding: 20px 0; /* Espacio extra vertical */
 }
 
+.logo {
+  display: flex;
+  flex-direction: column; /* Alinea logo y texto verticalmente */
+  align-items: center;    /* Centra horizontalmente */
+  gap: 10px;
+  flex: 1;                /* Empuja a los lados para centrarse */
+  text-align: center;
+}
+
 .hdr {
   max-width: 1020px;
   margin: 0 auto;
-  padding: 0 18px;
+  padding: 10px 18px;     /* Aumentamos el padding para dar aire */
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  position: relative;
-  min-height: 150px; /* Altura suficiente para el logo grande */
-}
-
-.logo {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column; 
-  align-items: center;
-  text-align: center;
-  gap: 12px;
+  justify-content: space-between;
+  height: auto;           /* Cambiado de 62px a auto para que quepa el logo grande */
+  gap: 8px;
 }
 
 .logo img {
@@ -427,7 +424,7 @@ input[type=time]{width:auto;padding:4px 7px;font-size:11px}
 
     <!-- CENTRO: El Maweka -->
     <div class="logo">
-      <img src="TU_URL_DE_LOGO_AQUI" alt="El Maweka">
+      <img src="https://drive.google.com/file/d/1m5MurhRLy_kdklvvFfk-iXGMJPWrl3Bp/view?usp=drive_link" alt="El Maweka">
       <div class="logo-text">
         <div class="logo-name">EL MAWEKA</div>
         <div class="logo-sub">Barbería de Élite</div>
