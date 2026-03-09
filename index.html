@@ -31,94 +31,112 @@ body.light{
 input[type=date]::-webkit-calendar-picker-indicator,
 input[type=time]::-webkit-calendar-picker-indicator{filter:invert(.55)}
 
-/* ── HEADER REESTRUCTURADO ── */
+/* ── HEADER OPTIMIZADO: LOGO GRANDE Y CENTRADO ── */
 header {
-  background: linear-gradient(180deg, #1c1710, #0d0b08);
-  border-bottom: 3px solid var(--gold);
+  background: linear-gradient(160deg, #0f0d0a, #1c1710);
+  border-bottom: 2px solid var(--gold);
   position: sticky;
   top: 0;
   z-index: 300;
-  box-shadow: 0 4px 30px rgba(0,0,0,0.8);
-  padding: 15px 0; /* Aumentamos el grosor del header */
+  box-shadow: 0 4px 24px #00000077;
+  padding: 15px 0; /* Añadimos padding para que el logo respire */
 }
 
 .hdr {
   max-width: 1020px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 18px;
   display: flex;
-  flex-direction: column; /* Apilado para máximo impacto en móvil */
+  flex-direction: column; /* Todo al centro en columna */
   align-items: center;
-  gap: 15px;
+  justify-content: center;
+  gap: 15px; /* Espacio entre logo y botones */
 }
 
-/* Contenedor del Logo */
 .logo {
   display: flex;
-  flex-direction: column; /* Icono/Imagen arriba, Texto abajo */
+  flex-direction: column; /* Icono arriba, texto abajo */
   align-items: center;
-  gap: 8px;
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.logo:hover {
-  transform: scale(1.05); /* Efecto sutil al pasar el mouse */
+  gap: 5px;
+  flex-shrink: 0;
 }
 
 .logo-icon {
-  font-size: 45px; /* De 27px a 45px: ¡Mucho más grande! */
+  font-size: 55px; /* Logo mucho más grande */
   line-height: 1;
-  filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.4));
+  margin-bottom: 5px;
 }
 
 .logo-name {
   font-family: 'Playfair Display', serif;
-  font-size: 26px; /* De 17px a 26px */
+  font-size: 26px; /* Nombre más imponente */
   color: var(--gold);
-  letter-spacing: 5px; /* Más espacio para un look premium */
-  font-weight: 700;
-  line-height: 1;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  letter-spacing: 5px;
+  display: block;
+  text-align: center;
 }
 
 .logo-sub {
-  font-size: 11px;
+  font-size: 11px; /* Subtítulo más legible */
   color: #7a6844;
   letter-spacing: 4px;
   text-transform: uppercase;
-  margin-top: 4px;
+  display: block;
+  margin-top: 2px;
+  text-align: center;
 }
 
-/* Botones de navegación */
+/* ── BOTONES (MANTENIENDO TU ESTILO ORIGINAL) ── */
 .hdr-right {
   display: flex;
   align-items: center;
-  gap: 10px;
-  justify-content: center;
-  width: 100%;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center; /* Centramos los botones debajo del logo */
 }
 
-/* Responsivo: Si la pantalla es ancha, volvemos a formato horizontal */
+.nbtn {
+  background: transparent;
+  border: 1px solid #3a2e1e;
+  color: var(--muted);
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-family: 'Lato', sans-serif;
+  transition: all .2s;
+  white-space: nowrap;
+}
+
+.nbtn:hover { border-color: var(--gold); color: var(--gold); }
+.nbtn.on { background: var(--gold); border-color: var(--gold); color: #0d0b08; font-weight: 700; }
+.nbtn.logout { border-color: #3a2218; color: #774433; }
+.nbtn.logout:hover { border-color: var(--red); color: var(--red); }
+
+.refresh-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  padding: 0;
+}
+
+.refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+.refresh-btn.spin { animation: spin .6s linear infinite; }
+
+/* Ajuste para PC: Mantiene el centrado pero con mejor espacio */
 @media(min-width: 768px) {
-  .hdr {
-    flex-direction: row; 
-    justify-content: space-between;
-    height: 90px; /* Header más alto en PC */
-    padding: 0 30px;
-  }
-  
-  .logo {
-    flex-direction: row; /* En PC se ve mejor de lado */
-    text-align: left;
-  }
-  
-  .logo-icon { font-size: 50px; }
-  .logo-name { font-size: 28px; }
-  
-  .hdr-right {
-    width: auto;
-  }
+  .logo-icon { font-size: 65px; }
+  .logo-name { font-size: 32px; }
 }
 
 /* ── LAYOUT ── */
