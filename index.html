@@ -31,8 +31,8 @@ body.light{
 input[type=date]::-webkit-calendar-picker-indicator,
 input[type=time]::-webkit-calendar-picker-indicator{filter:invert(.55)}
 
-/* ── HEADER ── */
-/* ── HEADER CORREGIDO ── */
+
+/* ── HEADER BASE ── */
 header {
   background: linear-gradient(160deg, #0f0d0a, #1c1710);
   border-bottom: 2px solid var(--gold);
@@ -40,7 +40,7 @@ header {
   top: 0;
   z-index: 300;
   box-shadow: 0 4px 24px #00000077;
-  padding: 10px 0; /* Añade espacio arriba y abajo */
+  padding: 10px 0;
 }
 
 .hdr {
@@ -49,22 +49,23 @@ header {
   padding: 0 18px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  min-height: 80px; /* Aumentado para que quepa el logo */
-  gap: 20px;
+  justify-content: space-between; /* En PC separa logo y botones */
+  min-height: 80px;
+  gap: 15px;
 }
 
 .logo {
   display: flex;
-  flex-direction: column; /* Pone el texto DEBAJO del círculo */
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   flex-shrink: 0;
+  transition: all 0.3s ease;
 }
 
 .logo-img {
-  width: 100px;   /* Tamaño del círculo */
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--gold);
@@ -80,25 +81,54 @@ header {
 }
 
 .logo-sub {
-  font-size: 10px;
+  font-size: 9px;
   color: #7a6844;
   letter-spacing: 3px;
   text-transform: uppercase;
   text-align: center;
-  margin-top: 2px;
 }
 
 .hdr-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
-.logo-icon{font-size:27px;line-height:1}
-.nbtn{background:transparent;border:1px solid #3a2e1e;color:var(--muted);padding:6px 12px;
-  border-radius:5px;cursor:pointer;font-size:12px;letter-spacing:1px;
-  font-family:'Lato',sans-serif;transition:all .2s;white-space:nowrap}
-.nbtn:hover{border-color:var(--gold);color:var(--gold)}
-.nbtn.on{background:var(--gold);border-color:var(--gold);color:#0d0b08;font-weight:700}
+
+/* 📱 AJUSTE PARA CELULARES (Pantallas menores a 600px) */
+@media (max-width: 600px) {
+  .hdr {
+    flex-direction: column; /* Pone los botones debajo del logo */
+    justify-content: center;
+    gap: 15px;
+    padding: 15px 10px;
+  }
+  
+  .logo-img {
+    width: 110px; /* Un poco más grande en móvil ya que está centrado */
+    height: 110px;
+  }
+
+  .hdr-right {
+    width: 100%;
+    justify-content: center; /* Centra los botones debajo del logo */
+    flex-wrap: wrap; /* Si son muchos botones, saltan de línea */
+  }
+}
+
+/* Botones y otros estilos */
+.nbtn {
+  background: transparent;
+  border: 1px solid #3a2e1e;
+  color: var(--muted);
+  padding: 8px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-family: 'Lato', sans-serif;
+  transition: all .2s;
+}
+.nbtn.on { background: var(--gold); border-color: var(--gold); color: #0d0b08; font-weight: 700; }
 .nbtn.logout{border-color:#3a2218;color:#774433}.nbtn.logout:hover{border-color:var(--red);color:var(--red)}
 .refresh-btn{background:var(--bg3);border:1px solid var(--border);color:var(--muted);
   width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:15px;
