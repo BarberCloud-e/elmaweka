@@ -792,7 +792,8 @@ function stepForm(card){
   phoneI.addEventListener("input",()=>{ 
   phoneI.value=phoneI.value.replace(/\D/g,""); 
   // Si empieza por algo que no sea 5, avisamos con color
-  phoneI.style.color = (phoneI.value.length > 0 && !phoneI.value.startsWith("5")) ? "#ff4444" : "";
+  //phoneI.style.color = (phoneI.value.length > 0 && !phoneI.value.startsWith("5")) ? "#ff4444" : "";
+  phoneI.style.color = (phoneI.value.length > 0 && !["5", "6"].includes(phoneI.value[0])) ? "#ff4444" : "";
   WZ.phone=phoneI.value; 
   evalBtn(); 
 });
@@ -806,7 +807,7 @@ function stepForm(card){
   const confBtn=mk("button","btn","Confirmar Cita ✓");
   function evalBtn(){
   const tel = phoneI.value.trim();
-  const esTelCuba = /^5\d{7}$/.test(tel); // Valida: empieza por 5 y tiene 8 dígitos
+ const esTelCuba = /^[56]\d{7}$/.test(tel); // Valida: empieza por 5 o 6 y tiene 8 dígitos
   const tieneNombre = nameI.value.trim().length >= 2; // Al menos 2 letras
   
   confBtn.disabled = !(tieneNombre && esTelCuba);
